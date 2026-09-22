@@ -26,6 +26,16 @@ test('ending soon shows the three running surveys that end first', async ({ page
   ]);
 });
 
+test('ending soon stands above the list of all surveys', async ({ page }) => {
+  await page.goto('/');
+  const endingSoon = page.getByRole('region', { name: 'Ending soon surveys' });
+  const list = page.getByRole('region', { name: 'All surveys' });
+  await expect(endingSoon).toBeVisible();
+  const endingSoonTop = (await endingSoon.boundingBox())?.y ?? 0;
+  const listTop = (await list.boundingBox())?.y ?? 0;
+  expect(endingSoonTop).toBeLessThan(listTop);
+});
+
 test('the list shows running surveys with category, title and deadline', async ({ page }) => {
   await page.goto('/');
   await expect(listTitles(page)).toHaveText([
