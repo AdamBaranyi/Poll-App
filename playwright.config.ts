@@ -5,6 +5,8 @@ const IS_CI = !!process.env['CI'];
 
 export default defineConfig({
   testDir: './e2e',
+  // These tests need the headers of the live version, see playwright.dist.config.ts.
+  testIgnore: /live-settings\.spec\.ts/,
   fullyParallel: true,
   forbidOnly: IS_CI,
   retries: IS_CI ? 1 : 0,

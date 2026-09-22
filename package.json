@@ -10,6 +10,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test:e2e": "playwright test",
+    "test:dist": "playwright test --config playwright.dist.config.ts",
     "test:e2e:browsers": "playwright test --config playwright.browsers.config.ts",
     "check:file-length": "node scripts/check-file-length.mts",
     "test:db": "bash scripts/test-database.sh"
