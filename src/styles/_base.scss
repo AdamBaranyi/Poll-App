@@ -71,3 +71,7 @@ textarea {
   border: 0;
   white-space: nowrap;
 }
+
+html:has(dialog[open]) {
+  overflow: hidden;
+}
