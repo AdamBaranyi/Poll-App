@@ -1,0 +1,62 @@
+<dialog
+  #dialog
+  class="dialog"
+  aria-labelledby="create-survey-title"
+  [class.confirmation]="publishedId()"
+  (close)="onDialogClose()"
+  (cancel)="cancel()"
+>
+  @if (publishedId()) {
+    <div class="published">
+      <p id="create-survey-title" class="published-title">Your survey is now published</p>
+      <button
+        #publishedClose
+        type="button"
+        class="close-published"
+        aria-label="Close and open the new survey"
+        (click)="openPublished()"
+      >
+        <img src="icons/close.svg" alt="" width="14" height="14" />
+      </button>
+    </div>
+  } @else {
+    <div class="top">
+      <div class="title">
+        <p class="badge">Draft</p>
+        <h2 id="create-survey-title">Create new survey</h2>
+      </div>
+      <button type="button" class="secondary" (click)="cancel()">
+        Cancel <img src="icons/close-light.svg" alt="" width="14" height="14" />
+      </button>
+    </div>
+    <form novalidate [formGroup]="form" (ngSubmit)="publish()">
+      <div class="surface">
+        <app-survey-fields [form]="form" />
+        <div class="questions">
+          @for (question of form.controls.questions.controls; track question; let index = $index) {
+            <app-question-editor
+              [question]="question"
+              [number]="index + 1"
+              (removed)="removeQuestion(index)"
+            />
+          }
+          <button
+            type="button"
+            class="secondary add-question"
+            [disabled]="form.controls.questions.length >= maxQuestions"
+            (click)="addQuestion()"
+          >
+            Add next question
+            <img src="icons/add-circle-light.svg" alt="" width="20" height="20" />
+          </button>
+        </div>
+      </div>
+      @if (saveFailed()) {
+        <p class="error" role="alert">The survey could not be published. Please try again.</p>
+      }
+      <div class="actions">
+        <button type="submit" class="primary" [disabled]="isSaving()">Publish</button>
+      </div>
+    </form>
+  }
+</dialog>
