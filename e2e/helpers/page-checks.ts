@@ -1,5 +1,15 @@
 import AxeBuilder from '@axe-core/playwright';
-import { Page } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
+
+/** Opens a page and waits until it shows its content, has loaded its data and its fonts. */
+export async function openPage(page: Page, path: string): Promise<void> {
+  await page.goto(path);
+  await expect(page.getByRole('main')).toBeVisible();
+  await expect(page.getByRole('status').filter({ hasText: 'Loading' })).toHaveCount(0);
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+  });
+}
 
 /** Returns true when the page is wider than the viewport. */
 export async function hasHorizontalScroll(page: Page): Promise<boolean> {
