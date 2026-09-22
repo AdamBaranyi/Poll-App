@@ -19,6 +19,10 @@
     line-height: 0.89;
   }
 
+  app-new-survey-button {
+    align-self: flex-start;
+  }
+
   p {
     max-width: 666px;
     font-size: clamp(18px, 2vw, 24px);

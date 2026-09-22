@@ -9,3 +9,9 @@
   display: block;
   border-radius: var(--radius);
 }
+
+@media (width < 600px) {
+  .create {
+    display: none;
+  }
+}

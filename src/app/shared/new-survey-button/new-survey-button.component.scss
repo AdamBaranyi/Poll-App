@@ -1,0 +1,38 @@
+.new-survey {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: var(--radius-button);
+  background-color: var(--color-orange-light);
+  color: var(--color-purple-dark);
+  font-family: var(--font-button);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color var(--transition);
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--color-orange);
+
+    .add {
+      display: block;
+    }
+  }
+
+  &:active {
+    .add {
+      display: none;
+    }
+
+    .done {
+      display: block;
+    }
+  }
+}
+
+.icon {
+  display: none;
+}
