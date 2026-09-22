@@ -1,0 +1,37 @@
+<form (submit)="submit($event)">
+  <div class="questions">
+    @for (question of questions(); track question.id) {
+      <fieldset
+        class="question"
+        [disabled]="readOnly()"
+        [attr.aria-describedby]="question.allowMultiple ? 'hint-' + question.id : null"
+      >
+        <legend>{{ question.position }}. {{ question.text }}</legend>
+        @if (question.allowMultiple) {
+          <p class="hint" [id]="'hint-' + question.id">More than one answer is possible.</p>
+        }
+        @for (option of question.options; track option.id) {
+          <label class="option">
+            <input
+              [type]="question.allowMultiple ? 'checkbox' : 'radio'"
+              [name]="question.id"
+              [value]="option.id"
+              [checked]="isChosen(question.id, option.id)"
+              (change)="choose(question, option.id, $event)"
+            />
+            <span
+              ><strong>{{ letterOf(option.position) }}.</strong> {{ option.label }}</span
+            >
+          </label>
+        }
+      </fieldset>
+    }
+  </div>
+  @if (!readOnly()) {
+    <div class="actions">
+      <button type="submit" class="complete" [disabled]="!isComplete() || isSaving()">
+        Complete survey
+      </button>
+    </div>
+  }
+</form>
