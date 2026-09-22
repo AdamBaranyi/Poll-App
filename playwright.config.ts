@@ -26,6 +26,12 @@ export default defineConfig({
       name: 'desktop-1440',
       use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } },
     },
+    {
+      // A wide screen shows the same layout as 1440 px, so only the layout itself is checked here.
+      name: 'wide-1920',
+      testMatch: /layout\.spec\.ts/,
+      use: { ...devices['Desktop Chrome'], viewport: { width: 1920, height: 1080 } },
+    },
   ],
   webServer: {
     command: `npx ng serve --configuration production --port ${PORT}`,
