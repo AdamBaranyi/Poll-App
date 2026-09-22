@@ -28,14 +28,15 @@ export async function findAccessibilityViolations(page: Page): Promise<string[]>
 }
 
 /** Collects console errors, page errors and requests to other hosts while the page runs. */
-export function watchPageProblems(page: Page, allowedOrigin: string): string[] {
+export function watchPageProblems(page: Page, allowedOrigins: string[]): string[] {
   const problems: string[] = [];
   page.on('console', (message) => {
     if (message.type() === 'error') problems.push(`console: ${message.text()}`);
   });
   page.on('pageerror', (error) => problems.push(`error: ${error.message}`));
   page.on('request', (request) => {
-    if (!request.url().startsWith(allowedOrigin)) problems.push(`request: ${request.url()}`);
+    const isAllowed = allowedOrigins.some((origin) => request.url().startsWith(origin));
+    if (!isAllowed) problems.push(`request: ${request.url()}`);
   });
   return problems;
 }

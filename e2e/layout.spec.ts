@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test';
-
+import { environment } from '../src/environments/environment';
+import { expect, test } from './helpers/test';
 import {
   findAccessibilityViolations,
   findSmallTexts,
@@ -41,7 +41,7 @@ for (const path of PAGES) {
   });
 
   test(`${path} loads without errors or third-party requests`, async ({ page, baseURL }) => {
-    const problems = watchPageProblems(page, baseURL ?? '');
+    const problems = watchPageProblems(page, [baseURL ?? '', environment.supabaseUrl]);
     await page.goto(path);
     await page.waitForLoadState('networkidle');
     expect(problems).toEqual([]);
