@@ -1,6 +1,6 @@
 import { AnswerOption, Question, QuestionRow } from '../models/question.model';
 import { Survey, SurveyDetail, SurveyDetailRow, SurveyRow } from '../models/survey.model';
-import { Vote, VoteRow } from '../models/vote.model';
+import { Answers, Vote, VoteInsert, VoteRow } from '../models/vote.model';
 
 /** Sorts questions or answers by their position. */
 function byPosition(first: { position: number }, second: { position: number }): number {
@@ -39,4 +39,20 @@ export function toSurveyDetail(row: SurveyDetailRow): SurveyDetail {
 /** Turns a database row into a vote. */
 export function toVote(row: VoteRow): Vote {
   return { id: row.id, questionId: row.question_id, optionId: row.option_id };
+}
+
+/** Turns the chosen answers into one database row per answer, all with the same submission id. */
+export function toVoteInserts(
+  surveyId: string,
+  submissionId: string,
+  answers: Answers,
+): VoteInsert[] {
+  return Object.entries(answers).flatMap(([questionId, optionIds]) =>
+    optionIds.map((optionId) => ({
+      survey_id: surveyId,
+      question_id: questionId,
+      option_id: optionId,
+      submission_id: submissionId,
+    })),
+  );
 }
