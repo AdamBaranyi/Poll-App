@@ -1,0 +1,30 @@
+:root {
+  --color-purple: #35273a;
+  --color-purple-dark: #221227;
+  --color-orange: #ffb770;
+  --color-orange-light: #ffcfa1;
+  --color-orange-pale: #fee9d4;
+  --color-orange-text: #d79451;
+  --color-card: #faf5fe;
+  --color-card-hover: #f4e9fb;
+  --color-white: #fefdff;
+  --color-track: #ededed;
+  --color-surface: rgb(217 217 217 / 8%);
+  --color-surface-hover: rgb(217 217 217 / 16%);
+  --color-form: rgb(142 112 153 / 16%);
+
+  --font-title: 'Nerko One', cursive;
+  --font-text: 'Mulish Variable', sans-serif;
+  --font-button: 'Nokora', sans-serif;
+
+  --radius: 5px;
+  --radius-button: 10px;
+  --radius-pill: 20px;
+  --radius-badge: 14px;
+  --radius-card: 80px;
+  --radius-list-card: 50px;
+
+  --content-width: 1042px;
+  --page-padding: 16px;
+  --transition: 300ms ease-out;
+}
