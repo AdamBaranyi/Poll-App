@@ -7,7 +7,7 @@ const jsdoc = require('eslint-plugin-jsdoc');
 
 module.exports = defineConfig([
   {
-    files: ['**/*.ts'],
+    files: ['**/*.ts', '**/*.mts'],
     extends: [
       eslint.configs.recommended,
       tseslint.configs.recommended,
