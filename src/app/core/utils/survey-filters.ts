@@ -6,9 +6,9 @@ export function isSurveyClosed(survey: Survey, now: Date): boolean {
   return survey.endDate !== null && survey.endDate <= now;
 }
 
-/** Returns the number of started days until the given date. */
+/** Returns the rounded number of days until the given date, but at least one. */
 export function daysUntil(date: Date, now: Date): number {
-  return Math.ceil((date.getTime() - now.getTime()) / DAY_IN_MS);
+  return Math.max(1, Math.round((date.getTime() - now.getTime()) / DAY_IN_MS));
 }
 
 /** Returns the running surveys that end first, the earliest end first. */
