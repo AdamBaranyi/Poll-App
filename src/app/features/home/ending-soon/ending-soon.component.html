@@ -1,0 +1,10 @@
+@if (endingSoon().length > 0) {
+  <section class="ending-soon" aria-labelledby="ending-soon-title">
+    <h3 id="ending-soon-title">Ending soon surveys</h3>
+    <ul class="cards">
+      @for (survey of endingSoon(); track survey.id) {
+        <li><app-survey-card [survey]="survey" [highlight]="true" /></li>
+      }
+    </ul>
+  </section>
+}
