@@ -10,7 +10,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test:e2e": "playwright test",
-    "check:file-length": "node scripts/check-file-length.mts"
+    "check:file-length": "node scripts/check-file-length.mts",
+    "test:db": "bash scripts/test-database.sh"
   },
   "private": true,
   "packageManager": "npm@11.12.1",
