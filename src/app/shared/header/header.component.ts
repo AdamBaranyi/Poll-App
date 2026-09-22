@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -7,4 +7,6 @@ import { RouterLink } from '@angular/router';
   styleUrl: './header.component.scss',
   templateUrl: './header.component.html',
 })
-export class HeaderComponent {}
+export class HeaderComponent {
+  readonly light = input(false);
+}

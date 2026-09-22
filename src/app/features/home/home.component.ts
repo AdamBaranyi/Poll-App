@@ -2,12 +2,13 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 
 import { Survey } from '../../core/models/survey.model';
 import { SurveyService } from '../../core/services/survey.service';
+import { HeaderComponent } from '../../shared/header/header.component';
 import { EndingSoonComponent } from './ending-soon/ending-soon.component';
 import { HeroComponent } from './hero/hero.component';
 import { SurveyListComponent } from './survey-list/survey-list.component';
 
 @Component({
-  imports: [HeroComponent, EndingSoonComponent, SurveyListComponent],
+  imports: [HeaderComponent, HeroComponent, EndingSoonComponent, SurveyListComponent],
   selector: 'app-home',
   styleUrl: './home.component.scss',
   templateUrl: './home.component.html',
