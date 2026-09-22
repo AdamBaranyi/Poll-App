@@ -55,3 +55,5 @@ create table public.votes (
 create index questions_survey_id_idx on public.questions (survey_id);
 create index answer_options_question_id_idx on public.answer_options (question_id);
 create index votes_survey_id_idx on public.votes (survey_id);
+create index votes_question_survey_idx on public.votes (question_id, survey_id);
+create index votes_option_question_idx on public.votes (option_id, question_id);
