@@ -6,7 +6,7 @@ import { Category } from '../../core/models/survey.model';
 @Component({
   host: {
     '(document:click)': 'closeOnOutsideClick($event)',
-    '(keydown.escape)': 'closeWithEscape()',
+    '(document:keydown.escape)': 'closeWithEscape()',
   },
   selector: 'app-category-dropdown',
   styleUrl: './category-dropdown.component.scss',
@@ -35,8 +35,9 @@ export class CategoryDropdownComponent {
     if (!this.host.nativeElement.contains(event.target as Node)) this.isOpen.set(false);
   }
 
-  /** Closes the list and puts the focus back on the button. */
+  /** Closes the open list and puts the focus back on the button. */
   closeWithEscape(): void {
+    if (!this.isOpen()) return;
     this.isOpen.set(false);
     this.toggleButton().nativeElement.focus();
   }
