@@ -53,7 +53,11 @@ module.exports = defineConfig([
           selector: ['objectLiteralProperty', 'typeProperty'],
           format: ['camelCase', 'snake_case'],
         },
-        { selector: 'property', modifiers: ['requiresQuotes'], format: null },
+        {
+          selector: ['objectLiteralProperty', 'typeProperty'],
+          modifiers: ['requiresQuotes'],
+          format: null,
+        },
         { selector: 'import', format: null },
       ],
       'jsdoc/require-jsdoc': [
