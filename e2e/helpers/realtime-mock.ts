@@ -45,11 +45,21 @@ function voteMessage(topic: string, vote: VoteRow): string {
   return JSON.stringify([null, null, topic, 'postgres_changes', { ids: ['1'], data }]);
 }
 
-/** Plays the Supabase Realtime server and returns a function that sends a new vote. */
-export async function mockRealtime(page: Page): Promise<(vote: VoteRow) => void> {
+export interface RealtimeMock {
+  pushVote: (vote: VoteRow) => void;
+  openChannels: () => number;
+}
+
+/** Plays the Supabase Realtime server for the page. */
+export async function mockRealtime(page: Page): Promise<RealtimeMock> {
   const topics = new Map<string, WebSocketRoute>();
   await page.routeWebSocket(/\/realtime\/v1\/websocket/, (socket) => {
     socket.onMessage((text) => answer(socket, String(text), topics));
   });
-  return (vote) => topics.forEach((socket, topic) => socket.send(voteMessage(topic, vote)));
+  return {
+    /** Sends a new vote to every open channel of the page. */
+    pushVote: (vote) => topics.forEach((socket, topic) => socket.send(voteMessage(topic, vote))),
+    /** Returns how many channels the page has joined. */
+    openChannels: () => topics.size,
+  };
 }

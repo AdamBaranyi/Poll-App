@@ -1,8 +1,7 @@
 import { Page, Route } from '@playwright/test';
 
-import type { VoteRow } from '../../src/app/core/models/vote.model';
 import { environment } from '../../src/environments/environment';
-import { mockRealtime } from './realtime-mock';
+import { mockRealtime, RealtimeMock } from './realtime-mock';
 import { answerNewVotes, answerSurveys, answerVotes, SavedVote } from './rest-answers';
 
 const SERVER_ERROR = 500;
@@ -18,7 +17,7 @@ export interface SupabaseMock {
   failVotes: boolean;
   savedVotes: SavedVote[];
   unexpectedRequests: string[];
-  pushVote: (vote: VoteRow) => void;
+  realtime: RealtimeMock;
 }
 
 /** Answers every request to Supabase with test data, so no test reaches the real database. */
@@ -28,7 +27,7 @@ export async function mockSupabase(page: Page): Promise<SupabaseMock> {
     failVotes: false,
     savedVotes: [],
     unexpectedRequests: [],
-    pushVote: await mockRealtime(page),
+    realtime: await mockRealtime(page),
   };
   await page.route(`${environment.supabaseUrl}/**`, (route) => answer(route, mock));
   return mock;
