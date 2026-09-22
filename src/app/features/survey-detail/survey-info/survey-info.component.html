@@ -1,0 +1,15 @@
+<p class="status" [class.ended]="closed()">{{ closed() ? 'Ended' : 'Published' }}</p>
+<div class="facts">
+  <p>
+    @if (survey().endDate; as endDate) {
+      {{ closed() ? 'Ended on' : 'Ends on' }} {{ endDate | date: 'dd.MM.yyyy' }}
+    } @else {
+      No end date
+    }
+  </p>
+  <p class="category">Category: {{ survey().category }}</p>
+</div>
+<h1>{{ survey().title }}</h1>
+@if (survey().description; as description) {
+  <p class="description">{{ description }}</p>
+}

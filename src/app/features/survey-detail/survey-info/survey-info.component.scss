@@ -1,0 +1,41 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.status {
+  align-self: flex-start;
+  padding: 3px 12px 3px 8px;
+  border-radius: 0 var(--radius-badge) 0 0;
+  background-color: var(--color-orange);
+  color: var(--color-purple-dark);
+  font-weight: 600;
+
+  &.ended {
+    background-color: var(--color-orange-pale);
+  }
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 16px;
+  font-weight: 500;
+}
+
+.category {
+  color: var(--color-purple-dark);
+}
+
+h1 {
+  margin-top: 8px;
+  font-size: clamp(36px, 5vw, 56px);
+  line-height: 0.9;
+  color: var(--color-orange-strong);
+}
+
+.description {
+  font-weight: 500;
+}
