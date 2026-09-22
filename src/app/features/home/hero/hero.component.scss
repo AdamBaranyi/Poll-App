@@ -1,0 +1,67 @@
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  padding-block: 32px 64px;
+}
+
+.intro {
+  display: flex;
+  flex: 1 1 480px;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 712px;
+
+  h1 {
+    font-size: clamp(48px, 7vw, 100px);
+    line-height: 0.89;
+  }
+
+  p {
+    max-width: 666px;
+    font-size: clamp(18px, 2vw, 24px);
+    font-weight: 600;
+  }
+}
+
+.visual {
+  position: relative;
+  flex: 0 1 426px;
+  aspect-ratio: 426 / 420;
+
+  img {
+    position: absolute;
+  }
+}
+
+.phone {
+  top: 0;
+  left: 1%;
+  width: 96%;
+}
+
+.question {
+  top: 1%;
+  left: 72%;
+  width: 21%;
+}
+
+.star {
+  top: 72%;
+  left: 11%;
+  width: 20%;
+}
+
+.bubble {
+  top: 21%;
+  left: 15%;
+  width: 30%;
+}
+
+.check {
+  top: 60%;
+  left: 71%;
+  width: 20%;
+}
