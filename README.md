@@ -1,59 +1,56 @@
-# PollApp
+# Poll App
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.8.
+Create surveys, share them and watch the results come in live. A school project for the
+Developer Akademie, built with Angular and Supabase.
 
-## Development server
+Live version: https://poll-app.adambaranyi.xyz
 
-To start a local development server, run:
+## What it can do
 
-```bash
-ng serve
-```
+- The home page lists all surveys with category, title and deadline, split into running and past
+  ones, and can be filtered by category.
+- Surveys that end soonest are shown above the list, the earliest end first.
+- "New survey" opens a form in an overlay: name, optional end date, category, optional description
+  and up to twenty questions with up to six answers each.
+- A survey page shows the questions, lets you answer them and shows the current results next to
+  them. The results update live while other people vote.
+- Past surveys can be read but not answered any more. The browser remembers a survey you have
+  already answered.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Technology
 
-## Code scaffolding
+- Angular 22 with standalone components, signals and a zoneless setup
+- Supabase for the database and the live updates
+- Playwright for the tests, ESLint and Prettier for the code style
+- No UI library: the design comes from Figma and is built with plain SCSS
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+## Running it locally
 
 ```bash
-ng build
+npm install
+npm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+The app then runs on http://localhost:4200/.
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Tests, lint and build:
 
 ```bash
-ng test
+npm run test:e2e
+npm run lint
+npm run build
 ```
 
-## Running end-to-end tests
+The tests answer every request to Supabase themselves, so they never touch the real database.
+`npm run test:e2e:browsers` repeats them in Safari and Firefox, `npm run test:db` checks the
+database rules in a throwaway Postgres container (needs Docker).
 
-For end-to-end (e2e) testing, run:
+## Database
 
-```bash
-ng e2e
-```
+`supabase/` holds the whole database: `schema.sql` for the tables, `policies.sql` for the access
+rules and `seed.sql` for the sample surveys.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+The Supabase URL and the publishable key in `src/environments/` are meant to be public. Every table
+has row level security: anyone may read, and may add surveys, questions, answers and votes, but
+only in the ways the app needs. Nothing can be changed or deleted afterwards, and votes are only
+accepted while a survey is running. `supabase/tests/` checks these rules.
