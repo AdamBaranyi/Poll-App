@@ -1,0 +1,91 @@
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 24px 40px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.description {
+  grid-row: span 2;
+}
+
+label {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.optional {
+  font-weight: 400;
+}
+
+.required {
+  color: var(--color-orange);
+}
+
+.control {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+input,
+textarea,
+select {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 13px;
+  border: 2px solid transparent;
+  border-radius: var(--radius) 20px var(--radius) var(--radius);
+  background-color: var(--color-white);
+  color: var(--color-purple);
+
+  &:focus {
+    background-color: var(--color-orange-pale);
+  }
+
+  &[aria-invalid='true'] {
+    border-color: var(--color-orange);
+  }
+}
+
+textarea {
+  resize: vertical;
+}
+
+select {
+  appearance: none;
+  padding-right: 40px;
+  background: var(--color-white) url('/icons/arrow-down-dark.svg') no-repeat right 8px center;
+  cursor: pointer;
+
+  &:focus {
+    background-color: var(--color-orange-pale);
+  }
+}
+
+.clear {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: var(--radius);
+  background: none;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--color-surface-hover);
+  }
+}
+
+.error {
+  color: var(--color-orange);
+  font-weight: 700;
+}
