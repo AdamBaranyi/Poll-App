@@ -1,0 +1,91 @@
+<fieldset class="question" [formGroup]="question()">
+  <legend class="visually-hidden">Question {{ number() }}</legend>
+  <div class="head">
+    <label [for]="'question-' + number()">
+      {{ number() }}. Question <span class="required" aria-hidden="true">*</span>
+    </label>
+    <button
+      type="button"
+      class="icon-button"
+      [attr.aria-label]="number() > 1 ? 'Remove question ' + number() : 'Clear question 1'"
+      (click)="deleteQuestion()"
+    >
+      <img src="icons/trash.svg" alt="" width="18" height="20" />
+    </button>
+  </div>
+  <input
+    type="text"
+    formControlName="text"
+    placeholder="Which date would work best for you?"
+    maxlength="200"
+    autocomplete="off"
+    required
+    [id]="'question-' + number()"
+    [attr.aria-invalid]="showError(question().controls.text)"
+    [attr.aria-describedby]="
+      showError(question().controls.text) ? 'question-' + number() + '-error' : null
+    "
+  />
+  @if (showError(question().controls.text)) {
+    <p class="error" [id]="'question-' + number() + '-error'">
+      {{
+        question().controls.text.hasError('minlength')
+          ? 'The question needs at least 3 characters.'
+          : 'Please enter the question.'
+      }}
+    </p>
+  }
+
+  <div class="answers-head">
+    <p class="answers-title">Answers <span class="required" aria-hidden="true">*</span></p>
+    <label class="allow-multiple">
+      <input type="checkbox" formControlName="allowMultiple" />
+      Allow multiple answers
+    </label>
+  </div>
+  <ol class="answers" formArrayName="answers">
+    @for (answer of answers.controls; track answer; let index = $index) {
+      <li class="answer">
+        <label [for]="'question-' + number() + '-answer-' + index">
+          <span aria-hidden="true">{{ letterOf(index + 1) }}.</span>
+          <span class="visually-hidden">Answer {{ letterOf(index + 1) }}</span>
+        </label>
+        <input
+          type="text"
+          maxlength="120"
+          autocomplete="off"
+          required
+          [id]="'question-' + number() + '-answer-' + index"
+          [formControlName]="index"
+          [attr.aria-invalid]="showError(answer)"
+        />
+        <button
+          type="button"
+          class="icon-button"
+          [attr.aria-label]="
+            (index < minAnswers ? 'Clear answer ' : 'Remove answer ') + letterOf(index + 1)
+          "
+          (click)="deleteAnswer(index)"
+        >
+          <img src="icons/trash.svg" alt="" width="18" height="20" />
+        </button>
+        @if (showError(answer)) {
+          <p class="error">Please fill in answer {{ letterOf(index + 1) }}.</p>
+        }
+      </li>
+    }
+  </ol>
+  <div class="answers-foot">
+    <button
+      type="button"
+      class="add-answer"
+      [disabled]="answers.length >= maxAnswers"
+      (click)="addAnswer()"
+    >
+      Add answer <img src="icons/add-circle-light.svg" alt="" width="20" height="20" />
+    </button>
+    @if (answers.length >= maxAnswers) {
+      <p class="hint">You can add up to 6 answer fields.</p>
+    }
+  </div>
+</fieldset>

@@ -1,0 +1,151 @@
+.question {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.head,
+.answers-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.head label,
+.answers-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.required {
+  color: var(--color-orange);
+}
+
+input[type='text'] {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 13px;
+  border: 2px solid transparent;
+  border-radius: var(--radius) 20px var(--radius) var(--radius);
+  background-color: var(--color-white);
+  color: var(--color-purple);
+
+  &:focus {
+    background-color: var(--color-orange-pale);
+  }
+
+  &[aria-invalid='true'] {
+    border-color: var(--color-orange);
+  }
+}
+
+.allow-multiple {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+
+  input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    border: 1.5px solid var(--color-white);
+    border-radius: 3px;
+    background: transparent center / 12px no-repeat;
+    appearance: none;
+    cursor: pointer;
+
+    &:checked {
+      border-color: var(--color-orange);
+      background-color: var(--color-orange);
+      background-image: url('/icons/check.svg');
+    }
+  }
+}
+
+.answers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.answer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+
+  label {
+    width: 24px;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .error {
+    flex-basis: 100%;
+    padding-left: 32px;
+  }
+}
+
+.icon-button {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: var(--radius);
+  background: none;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--color-surface-hover);
+  }
+}
+
+.answers-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-left: 32px;
+}
+
+.add-answer {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  border: none;
+  border-radius: var(--radius);
+  background: none;
+  color: var(--color-white);
+  font-family: var(--font-button);
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:hover:enabled {
+    background-color: var(--color-surface-hover);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.error {
+  color: var(--color-orange);
+  font-weight: 700;
+}
