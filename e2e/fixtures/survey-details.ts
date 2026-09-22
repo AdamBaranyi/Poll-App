@@ -55,6 +55,15 @@ const TEST_QUESTIONS: Record<number, TestQuestion[]> = {
         { label: 'Mountains', votes: 1 },
       ],
     },
+    {
+      text: 'How should we travel?',
+      allowMultiple: false,
+      options: [
+        { label: 'Train', votes: 1 },
+        { label: 'Bus', votes: 1 },
+        { label: 'Bike', votes: 1 },
+      ],
+    },
   ],
 };
 
