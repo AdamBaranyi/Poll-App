@@ -49,7 +49,10 @@ module.exports = defineConfig([
         { selector: 'variable', modifiers: ['const'], format: ['camelCase', 'UPPER_CASE'] },
         { selector: 'typeLike', format: ['PascalCase'] },
         { selector: 'enumMember', format: ['PascalCase'] },
-        { selector: ['objectLiteralProperty', 'typeProperty'], format: ['camelCase', 'snake_case'] },
+        {
+          selector: ['objectLiteralProperty', 'typeProperty'],
+          format: ['camelCase', 'snake_case'],
+        },
         { selector: 'property', modifiers: ['requiresQuotes'], format: null },
         { selector: 'import', format: null },
       ],
