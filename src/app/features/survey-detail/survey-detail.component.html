@@ -1,4 +1,41 @@
 <app-header [light]="true" />
 <main class="page survey-detail">
-  <h1>Survey</h1>
+  @switch (status()) {
+    @case ('loading') {
+      <p class="message" role="status">Loading survey …</p>
+    }
+    @case ('missing') {
+      <p class="message">This survey does not exist. <a routerLink="/">Back to all surveys</a></p>
+    }
+    @case ('failed') {
+      <p class="message" role="alert">The survey could not be loaded. Please try again later.</p>
+    }
+    @case ('ready') {
+      @if (survey(); as survey) {
+        <div class="layout">
+          <article class="survey">
+            <a class="close" routerLink="/" aria-label="Back to all surveys">
+              <img src="icons/close.svg" alt="" width="14" height="14" />
+            </a>
+            <app-survey-info [survey]="survey" [closed]="isClosed()" />
+            <app-question-list
+              [questions]="survey.questions"
+              [readOnly]="isClosed() || hasAnswered()"
+              [isSaving]="isSaving()"
+              (completed)="complete($event)"
+            />
+            @if (saveFailed()) {
+              <p class="notice" role="alert">Your answers could not be saved. Please try again.</p>
+            }
+            @if (hasAnswered()) {
+              <p class="notice" role="status">Thank you for taking part! Your answers are saved.</p>
+            } @else if (isClosed()) {
+              <p class="notice">This survey has ended, so answers are no longer possible.</p>
+            }
+          </article>
+          <app-results [results]="results()" />
+        </div>
+      }
+    }
+  }
 </main>
