@@ -1,9 +1,16 @@
-<main class="page home">
-  <section class="hero">
-    <h1>Collect Feedback, Unlock Ideas</h1>
-    <p>
-      Create and share surveys in minutes – from team events to workplace culture. Collect opinions,
-      engage your audience, and turn feedback into action.
-    </p>
+<main class="home">
+  <div class="page">
+    <app-hero />
+  </div>
+  <section class="surveys" aria-labelledby="surveys-title">
+    <h2 id="surveys-title">Your surveys</h2>
+    @if (isLoading()) {
+      <p class="message" role="status">Loading surveys …</p>
+    } @else if (loadFailed()) {
+      <p class="message" role="alert">The surveys could not be loaded. Please try again later.</p>
+    } @else {
+      <app-ending-soon [surveys]="surveys()" />
+      <app-survey-list [surveys]="surveys()" />
+    }
   </section>
 </main>
