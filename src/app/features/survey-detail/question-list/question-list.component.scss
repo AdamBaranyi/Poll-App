@@ -35,8 +35,10 @@ legend {
   transition: background-color var(--transition);
 }
 
-.question:enabled .option:hover {
-  background-color: var(--color-orange-pale);
+@media (hover: hover) {
+  .question:enabled .option:hover {
+    background-color: var(--color-orange-pale);
+  }
 }
 
 .question:disabled .option {

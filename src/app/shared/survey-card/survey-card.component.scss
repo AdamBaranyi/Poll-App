@@ -14,8 +14,10 @@
   background-color: var(--color-surface);
   transition: background-color var(--transition);
 
-  &:hover {
-    background-color: var(--color-surface-hover);
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--color-surface-hover);
+    }
   }
 
   &:has(.link:focus-visible) {
@@ -69,8 +71,10 @@
   background-color: var(--color-card);
   transition-duration: 100ms;
 
-  &:hover {
-    background-color: var(--color-card-hover);
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--color-card-hover);
+    }
   }
 
   .category {

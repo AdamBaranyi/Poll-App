@@ -13,12 +13,21 @@
   cursor: pointer;
   transition: background-color var(--transition);
 
-  &:hover,
   &:focus-visible {
     background-color: var(--color-orange);
 
     .add {
       display: block;
+    }
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--color-orange);
+
+      .add {
+        display: block;
+      }
     }
   }
 
