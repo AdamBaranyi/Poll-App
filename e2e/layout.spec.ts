@@ -1,4 +1,5 @@
 import { environment } from '../src/environments/environment';
+import { surveyId } from './fixtures/test-ids';
 import { expect, test } from './helpers/test';
 import {
   findAccessibilityViolations,
@@ -8,10 +9,17 @@ import {
 } from './helpers/page-checks';
 
 const MIN_FONT_SIZE = 16;
-const PAGES = ['/', '/survey/1'];
+const RUNNING_SURVEY = 1;
+const ENDED_SURVEY = 7;
+const PAGES = [
+  '/',
+  `/survey/${surveyId(RUNNING_SURVEY)}`,
+  `/survey/${surveyId(ENDED_SURVEY)}`,
+  '/survey/unknown',
+];
 
 test('header links back to the home page', async ({ page }) => {
-  await page.goto('/survey/1');
+  await page.goto(`/survey/${surveyId(RUNNING_SURVEY)}`);
   await page.getByRole('link', { name: 'Poll App' }).click();
   await expect(page).toHaveURL('/');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
