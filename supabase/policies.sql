@@ -6,8 +6,11 @@ alter table public.questions enable row level security;
 alter table public.answer_options enable row level security;
 alter table public.votes enable row level security;
 
--- New Supabase projects expose no table by default, so every right is granted here on purpose.
+-- Depending on the project settings, Supabase gives new tables all rights for anon and
+-- authenticated. Everything is taken away first, so only the rights below are left.
 -- Insert rights name the columns, so the browser cannot set id or created_at itself.
+revoke all on public.surveys, public.questions, public.answer_options, public.votes
+  from anon, authenticated;
 grant usage on schema public to anon;
 grant select on public.surveys, public.questions, public.answer_options, public.votes to anon;
 grant insert (title, description, category, end_date) on public.surveys to anon;
