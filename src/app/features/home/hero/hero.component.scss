@@ -69,3 +69,37 @@
   left: 71%;
   width: 20%;
 }
+
+/* The parts around the phone drift apart on hover, each at its own speed, as in Figma.
+   Only on screens with a real pointer, and never with reduced motion. */
+@media (hover: hover) and (width >= 900px) and (prefers-reduced-motion: no-preference) {
+  .visual img {
+    transition: transform 300ms ease-out;
+  }
+
+  .visual:hover {
+    .phone {
+      transform: scale(1.01);
+    }
+
+    .bubble {
+      transform: translate(-6%, -8%) rotate(-3deg);
+      transition-duration: 350ms;
+    }
+
+    .question {
+      transform: translate(7%, -10%) rotate(4deg);
+      transition-duration: 450ms;
+    }
+
+    .star {
+      transform: translate(-9%, 7%) rotate(-8deg);
+      transition-duration: 500ms;
+    }
+
+    .check {
+      transform: translate(8%, 5%) rotate(5deg);
+      transition-duration: 400ms;
+    }
+  }
+}
