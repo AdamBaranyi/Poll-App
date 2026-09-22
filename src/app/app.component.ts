@@ -7,6 +7,6 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.component.scss',
   templateUrl: './app.component.html',
 })
-export class App {
+export class AppComponent {
   protected readonly title = signal('poll-app');
 }
