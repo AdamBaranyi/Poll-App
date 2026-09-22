@@ -1,0 +1,33 @@
+<section class="all-surveys" aria-labelledby="all-surveys-title">
+  <h3 id="all-surveys-title" class="visually-hidden">All surveys</h3>
+  <div class="toolbar">
+    <div class="tabs" role="group" aria-label="Show surveys">
+      <button
+        type="button"
+        class="tab"
+        [attr.aria-pressed]="!showPast()"
+        (click)="showPast.set(false)"
+      >
+        Active survey
+      </button>
+      <button
+        type="button"
+        class="tab"
+        [attr.aria-pressed]="showPast()"
+        (click)="showPast.set(true)"
+      >
+        Past survey
+      </button>
+    </div>
+    <app-category-dropdown [(selected)]="category" />
+  </div>
+  @if (visibleSurveys().length > 0) {
+    <ul class="list">
+      @for (survey of visibleSurveys(); track survey.id) {
+        <li><app-survey-card [survey]="survey" /></li>
+      }
+    </ul>
+  } @else {
+    <p class="empty">No surveys found.</p>
+  }
+</section>
