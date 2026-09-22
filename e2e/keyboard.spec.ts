@@ -3,7 +3,13 @@ import { openSurvey, SURVEY_WITHOUT_VOTES } from './helpers/detail-page';
 import { openPage } from './helpers/page-checks';
 import { expect, test } from './helpers/test';
 
-test('the first tab steps lead through header and hero', async ({ page }) => {
+/** Safari only steps to links and buttons with Tab when full keyboard access is switched on. */
+function skipWithoutTabOrder(browserName: string): void {
+  test.skip(browserName === 'webkit', 'Safari needs full keyboard access for this tab order.');
+}
+
+test('the first tab steps lead through header and hero', async ({ page, browserName }) => {
+  skipWithoutTabOrder(browserName);
   await openPage(page, '/');
   await page.keyboard.press('Tab');
   await expect(page.getByRole('link', { name: 'Poll App' })).toBeFocused();
@@ -18,7 +24,8 @@ test('a survey opens with the keyboard', async ({ page }) => {
   await expect(page).toHaveURL(`/survey/${surveyId(SURVEY_WITHOUT_VOTES)}`);
 });
 
-test('the category filter can be used with the keyboard', async ({ page }) => {
+test('the category filter can be used with the keyboard', async ({ page, browserName }) => {
+  skipWithoutTabOrder(browserName);
   await openPage(page, '/');
   const toggle = page.getByRole('button', { name: 'Sort by categories' });
   await toggle.focus();
