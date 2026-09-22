@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, ElementRef, inject, input, viewChild } from '@angular/core';
 
 import { SurveyDialogService } from '../../core/services/survey-dialog.service';
 
@@ -10,9 +10,14 @@ import { SurveyDialogService } from '../../core/services/survey-dialog.service';
 export class NewSurveyButtonComponent {
   readonly label = input('New survey');
   private readonly dialog = inject(SurveyDialogService);
+  private readonly button = viewChild.required<ElementRef<HTMLButtonElement>>('button');
 
-  /** Opens the form to create a new survey. */
+  /**
+   * Opens the form to create a new survey. Safari does not focus a button when it is clicked, so
+   * the button takes the focus itself and gets it back when the form closes.
+   */
   open(): void {
+    this.button().nativeElement.focus();
     this.dialog.open();
   }
 }
