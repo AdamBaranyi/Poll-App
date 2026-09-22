@@ -1,4 +1,5 @@
 import type { Category, SurveyRow } from '../../src/app/core/models/survey.model';
+import { surveyId } from './test-ids';
 
 const DAY_IN_MS = 86_400_000;
 const HOUR_IN_MS = 3_600_000;
@@ -28,7 +29,7 @@ function daysFromNow(days: number): string {
 /** Turns the test surveys into rows the way Supabase returns them. */
 export function buildSurveyRows(): SurveyRow[] {
   return TEST_SURVEYS.map((survey, index) => ({
-    id: `survey-${index + 1}`,
+    id: surveyId(index + 1),
     title: survey.title,
     description: null,
     category: survey.category,

@@ -1,6 +1,9 @@
 import { Locator, Page } from '@playwright/test';
 
+import { surveyId } from './fixtures/test-ids';
 import { expect, test } from './helpers/test';
+
+const SURVEY_WITHOUT_END_DATE = 5;
 
 /** Returns the titles of the cards in the list below the tabs. */
 function listTitles(page: Page): Locator {
@@ -67,7 +70,7 @@ test('the dropdown closes with Escape and gives the focus back', async ({ page }
 test('a survey card opens the detail page', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('link', { name: 'Coffee or tea' }).click();
-  await expect(page).toHaveURL('/survey/survey-5');
+  await expect(page).toHaveURL(`/survey/${surveyId(SURVEY_WITHOUT_END_DATE)}`);
 });
 
 test('a message appears when the surveys cannot be loaded', async ({ page, supabase }) => {
