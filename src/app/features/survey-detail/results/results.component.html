@@ -1,0 +1,37 @@
+<section class="results" aria-labelledby="results-title">
+  <button
+    type="button"
+    class="toggle"
+    aria-controls="results-content"
+    [attr.aria-expanded]="isOpen()"
+    (click)="isOpen.set(!isOpen())"
+  >
+    {{ isOpen() ? 'Close results' : 'See results' }}
+    <img class="arrow" src="icons/arrow-down-dark.svg" alt="" width="24" height="24" />
+  </button>
+  <div id="results-content" class="content" [class.closed]="!isOpen()">
+    <h2 id="results-title">Survey results <span class="live">LIVE</span></h2>
+    <p class="visually-hidden" aria-live="polite">{{ voteCount() }} votes so far</p>
+    @if (voteCount() > 0) {
+      @for (result of results(); track result.question.id) {
+        <section class="question">
+          <h3>{{ result.question.position }}. {{ result.question.text }}</h3>
+          <ul class="bars">
+            @for (item of result.options; track item.option.id) {
+              <li class="bar-row">
+                <span class="letter" aria-hidden="true">{{ item.letter }}</span>
+                <span class="visually-hidden">{{ item.option.label }}:</span>
+                <span class="bar" aria-hidden="true">
+                  <span class="fill" [style.width.%]="item.percent"></span>
+                </span>
+                <span class="percent">{{ item.percent }}%</span>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    } @else {
+      <p class="empty">There are no answers yet.</p>
+    }
+  </div>
+</section>
