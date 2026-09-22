@@ -40,9 +40,17 @@
 }
 
 .message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
   padding-block: 64px;
   font-size: 18px;
   text-align: center;
+
+  h1 {
+    color: var(--color-orange-strong);
+  }
 
   a {
     color: inherit;

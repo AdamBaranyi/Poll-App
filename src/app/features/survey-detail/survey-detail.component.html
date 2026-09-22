@@ -5,10 +5,16 @@
       <p class="message" role="status">Loading survey …</p>
     }
     @case ('missing') {
-      <p class="message">This survey does not exist. <a routerLink="/">Back to all surveys</a></p>
+      <section class="message">
+        <h1>Survey not found</h1>
+        <p>This survey does not exist. <a routerLink="/">Back to all surveys</a></p>
+      </section>
     }
     @case ('failed') {
-      <p class="message" role="alert">The survey could not be loaded. Please try again later.</p>
+      <section class="message">
+        <h1>Something went wrong</h1>
+        <p role="alert">The survey could not be loaded. Please try again later.</p>
+      </section>
     }
     @case ('ready') {
       @if (survey(); as survey) {
