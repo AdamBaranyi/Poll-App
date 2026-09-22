@@ -1,0 +1,42 @@
+<div class="dropdown">
+  <button
+    #toggleButton
+    type="button"
+    class="toggle"
+    aria-controls="category-menu"
+    [attr.aria-expanded]="isOpen()"
+    (click)="toggle()"
+  >
+    Sort by categories
+    <img class="arrow" src="icons/arrow-down.svg" alt="" width="24" height="24" />
+  </button>
+  @if (isOpen()) {
+    <ul id="category-menu" class="menu">
+      <li>
+        <button
+          type="button"
+          class="option"
+          [attr.aria-pressed]="selected() === null"
+          (click)="choose(null)"
+        >
+          All Surveys
+        </button>
+      </li>
+      @for (category of categories; track category) {
+        <li>
+          <button
+            type="button"
+            class="option"
+            [attr.aria-pressed]="selected() === category"
+            (click)="choose(category)"
+          >
+            {{ category }}
+          </button>
+        </li>
+      }
+    </ul>
+  }
+  @if (selected(); as category) {
+    <p class="selected">{{ category }}</p>
+  }
+</div>
