@@ -107,6 +107,14 @@ begin
 exception when insufficient_privilege then null;
 end $$;
 
+-- Row level security does not apply to truncate, so only the missing right can stop it.
+do $$
+begin
+  truncate public.votes;
+  raise exception 'FAILED: anon emptied the votes table';
+exception when insufficient_privilege then null;
+end $$;
+
 select 'All security checks passed' as result;
 
 rollback;
