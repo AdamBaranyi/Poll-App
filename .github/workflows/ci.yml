@@ -34,6 +34,13 @@ jobs:
       - run: npm run lint
       - run: npm run build
 
+  database:
+    name: Database rules
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - run: bash scripts/test-database.sh
+
   e2e:
     name: Playwright
     runs-on: ubuntu-24.04
