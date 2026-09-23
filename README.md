@@ -5,6 +5,8 @@ Developer Akademie, built with Angular and Supabase.
 
 Live version: https://poll-app.adambaranyi.xyz
 
+[Deutsche Fassung](README.de.md)
+
 ## What it can do
 
 - The home page lists all surveys with category, title and deadline, split into running and past
@@ -42,8 +44,9 @@ npm run build
 ```
 
 The tests answer every request to Supabase themselves, so they never touch the real database.
-`npm run test:e2e:browsers` repeats them in Safari and Firefox, `npm run test:db` checks the
-database rules in a throwaway Postgres container (needs Docker).
+`npm run test:e2e:browsers` repeats them in Safari and Firefox, `npm run test:dist` checks the
+built app behind the headers of the live version, and `npm run test:db` checks the database rules
+in a throwaway Postgres container (needs Docker).
 
 ## Database
 
