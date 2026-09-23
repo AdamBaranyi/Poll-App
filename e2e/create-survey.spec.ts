@@ -160,3 +160,11 @@ test('Create survey in the header of a survey opens the same form', async ({ pag
   await page.getByRole('button', { name: 'Create survey' }).click();
   await expect(page.getByRole('dialog', { name: 'Create new survey' })).toBeVisible();
 });
+
+test('the form fits on a normal screen without scrolling', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 970 });
+  const dialog = await openForm(page);
+  await expect(dialog).toBeVisible();
+  const scrolls = await dialog.evaluate((el) => el.scrollHeight > el.clientHeight);
+  expect(scrolls).toBe(false);
+});
