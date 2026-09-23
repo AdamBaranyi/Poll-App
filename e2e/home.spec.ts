@@ -90,3 +90,17 @@ test('a message appears when the surveys cannot be loaded', async ({ page, supab
     'The surveys could not be loaded. Please try again later.',
   );
 });
+
+test('text and illustration stay side by side down to 880 pixels', async ({ page }) => {
+  await page.setViewportSize({ width: 880, height: 900 });
+  await page.goto('/');
+  const text = await page.getByRole('heading', { level: 1 }).boundingBox();
+  const picture = await page.locator('.visual').boundingBox();
+  expect(picture?.x ?? 0).toBeGreaterThan((text?.x ?? 0) + (text?.width ?? 0));
+});
+
+test('the illustration keeps its Figma size on a large screen', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  await expect(page.locator('.visual')).toHaveCSS('width', '426px');
+});

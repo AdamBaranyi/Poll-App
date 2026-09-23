@@ -9,7 +9,7 @@
 
 .intro {
   display: flex;
-  flex: 1 1 480px;
+  flex: 1 1 420px;
   flex-direction: column;
   gap: 24px;
   max-width: 712px;
@@ -32,7 +32,9 @@
 
 .visual {
   position: relative;
-  flex: 0 1 426px;
+  // Full Figma size on large screens, a bit smaller before it moves below the text.
+  flex: 1 1 360px;
+  max-width: 426px;
   aspect-ratio: 426 / 420;
 
   img {
