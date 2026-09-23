@@ -20,3 +20,10 @@ test('the buttons of the form change softly', async ({ page }) => {
   await expect(dialog).toBeVisible();
   expect(await findButtonsWithoutTransition(page)).toEqual([]);
 });
+
+test('the icon of the New survey button grows in instead of jumping', async ({ page }) => {
+  await openPage(page, '/');
+  const icon = page.getByRole('button', { name: 'New survey' }).locator('img').first();
+  await expect(icon).toHaveCSS('width', '0px');
+  await expect(icon).not.toHaveCSS('transition-duration', '0s');
+});
