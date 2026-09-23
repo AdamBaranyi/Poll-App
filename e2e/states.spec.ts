@@ -11,7 +11,7 @@ import {
 import { expect, test } from './helpers/test';
 
 const MIN_FONT_SIZE = 16;
-const DESKTOP_WIDTH = 900;
+const DESKTOP_WIDTH = 1100;
 
 /** Checks that a state has no small text, no accessibility violation and no sideways scrolling. */
 async function expectCleanState(page: Page): Promise<void> {

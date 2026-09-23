@@ -7,7 +7,7 @@ import {
 } from './helpers/detail-page';
 import { expect, test } from './helpers/test';
 
-const DESKTOP_WIDTH = 900;
+const DESKTOP_WIDTH = 1100;
 const ANSWERS_PER_QUESTION = 3;
 
 test('the detail view shows status, dates, category, title and all answers', async ({ page }) => {
