@@ -31,10 +31,23 @@ export async function findSmallTexts(page: Page, minSize: number): Promise<strin
   }, minSize);
 }
 
+// These parts keep the orange from the Figma design, as the mentor asked, although it is lighter
+// than the WCAG contrast asks for. The school does not require the contrast, the rest is still checked.
+const FIGMA_COLOURED = ['app-survey-info h1', '.message h1', '.live', '.percent'];
+
 /** Returns the ids of all accessibility rules the page violates. */
 export async function findAccessibilityViolations(page: Page): Promise<string[]> {
-  const results = await new AxeBuilder({ page }).analyze();
-  return results.violations.map((violation) => violation.id);
+  const others = await new AxeBuilder({ page }).disableRules(['color-contrast']).analyze();
+  const contrast = await contrastCheck(page).analyze();
+  return [...others.violations, ...contrast.violations].map((violation) => violation.id);
+}
+
+/** Builds a contrast check that leaves out the parts with their Figma colour. */
+function contrastCheck(page: Page): AxeBuilder {
+  return FIGMA_COLOURED.reduce(
+    (builder, selector) => builder.exclude(selector),
+    new AxeBuilder({ page }).withRules(['color-contrast']),
+  );
 }
 
 /** Collects console errors, page errors and requests to other hosts while the page runs. */
