@@ -50,3 +50,13 @@ export function watchPageProblems(page: Page, allowedOrigins: string[]): string[
   });
   return problems;
 }
+
+/** Returns the visible buttons that change without a transition when the pointer is over them. */
+export async function findButtonsWithoutTransition(page: Page): Promise<string[]> {
+  return page.evaluate(() =>
+    [...document.querySelectorAll('button')]
+      .filter((button) => button.offsetParent !== null)
+      .filter((button) => getComputedStyle(button).transitionDuration === '0s')
+      .map((button) => `${button.className} ${(button.textContent ?? '').trim()}`.trim()),
+  );
+}

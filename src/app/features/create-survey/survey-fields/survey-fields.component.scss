@@ -79,6 +79,7 @@ select {
   border-radius: var(--radius);
   background: none;
   cursor: pointer;
+  transition: background-color var(--transition);
 
   &:hover {
     background-color: var(--color-surface-hover);

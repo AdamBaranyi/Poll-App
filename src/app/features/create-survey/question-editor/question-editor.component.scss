@@ -106,6 +106,7 @@ input[type='text'] {
   border-radius: var(--radius);
   background: none;
   cursor: pointer;
+  transition: background-color var(--transition);
 
   &:hover {
     background-color: var(--color-surface-hover);
@@ -134,6 +135,7 @@ input[type='text'] {
   font-weight: 700;
   text-decoration: underline;
   cursor: pointer;
+  transition: background-color var(--transition);
 
   &:hover:enabled {
     background-color: var(--color-surface-hover);

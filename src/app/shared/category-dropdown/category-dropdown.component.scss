@@ -58,6 +58,7 @@
   letter-spacing: 0.02em;
   text-align: left;
   cursor: pointer;
+  transition: background-color var(--transition);
 
   &:hover,
   &[aria-pressed='true'] {
