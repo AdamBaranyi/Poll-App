@@ -19,6 +19,8 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          # This job may write issues; its token should not stay in .git/config for later steps.
+          persist-credentials: false
 
       - name: Check that the full history is present
         run: test "$(git rev-list --count HEAD)" -gt 1
