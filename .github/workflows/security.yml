@@ -39,12 +39,17 @@ jobs:
       # The findings are collected here, not judged: the judgement happens in ci.yml on push
       # and pull request from high on. This run only turns red when gitleaks finds a secret.
       - name: Collect dependency findings from moderate on
+        id: audit
         run: |
-          bash scripts/audit.sh moderate > audit.txt 2>&1 || true
+          code=0
+          bash scripts/audit.sh moderate > audit.txt 2>&1 || code=$?
+          echo "code=$code" >> "$GITHUB_OUTPUT"
           { echo '### npm audit, from moderate on'; echo '```'; cat audit.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Report the findings in one issue, only when they change
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
+          # Without the npm registry the audit ends with 1 and no advisory: that is no all-clear.
+          AUDIT_EXIT_CODE: ${{ steps.audit.outputs.code }}
         run: bash scripts/security-report.sh audit.txt

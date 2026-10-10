@@ -12,7 +12,9 @@ How the Poll App checks its dependencies and its history for secrets.
 
 `scripts/security-report.sh` opens that issue with the first finding, updates it only when the
 list of advisories changes and closes it when nothing is left. So a finding sends one mail and
-does not turn `main` red every day. `npm run test:scripts` checks both scripts against fake `gh`
+does not turn `main` red every day. A report without advisories only counts as clean when the
+audit really ran: without the npm registry `npm audit` ends with an error and no advisory, so an
+open issue stays open, and without one a new issue says that the check did not run. `npm run test:scripts` checks both scripts against fake `gh`
 and `npm` programs.
 
 ## Updates

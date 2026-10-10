@@ -8,10 +8,12 @@ work=$(mktemp -d)
 state="$work/state"
 trap 'rm -rf "$work"' EXIT
 failures=0
+audit_exit=0
 
 # Runs one of the scripts with the fakes and prints its exit code.
 run() {
-  PATH="$root/scripts/fakes:$PATH" STATE="$state" bash "$root/scripts/$1" "${@:2}" >/dev/null 2>&1
+  PATH="$root/scripts/fakes:$PATH" STATE="$state" AUDIT_EXIT_CODE="$audit_exit" \
+    bash "$root/scripts/$1" "${@:2}" >/dev/null 2>&1
   echo $?
 }
 
@@ -83,6 +85,28 @@ test_report_changed_findings() {
   check 'changed findings add a comment' called 'gh issue comment 7'
 }
 
+# An audit that did not run is no all-clear: the open issue stays as it is.
+test_report_outage_keeps_issue() {
+  next_step
+  audit_exit=1
+  run security-report.sh "$work/outage.txt" >/dev/null
+  audit_exit=0
+  check 'a failed audit leaves the open issue alone' not_called 'gh issue (close|edit|comment)'
+}
+
+# Without an open issue, a failed audit opens one, but only once.
+test_report_outage_without_issue() {
+  next_step
+  audit_exit=1
+  run security-report.sh "$work/outage.txt" >/dev/null
+  check 'a failed audit opens an issue' called 'gh issue create'
+  check 'the issue says that the audit did not run' grep -q 'Prüfung lief nicht' "$state/body"
+  next_step
+  run security-report.sh "$work/outage.txt" >/dev/null
+  audit_exit=0
+  check 'the same failure again changes nothing' not_called 'gh (issue (create|edit|comment|close)|label)'
+}
+
 # Without findings the issue closes, and a second clean run writes nothing.
 test_report_clean() {
   next_step
@@ -97,12 +121,16 @@ mkdir -p "$state"
 printf 'source-map-js  high\nhttps://github.com/advisories/GHSA-aaaa-bbbb-cccc\n' > "$work/one.txt"
 printf 'piscina  critical\nhttps://github.com/advisories/GHSA-dddd-eeee-ffff\n' > "$work/two.txt"
 printf 'found 0 vulnerabilities\n' > "$work/clean.txt"
+printf 'npm error audit endpoint returned an error\n' > "$work/outage.txt"
 
 test_audit
 test_audit_unknown_level
 test_report_opens_issue
 test_report_same_findings
 test_report_changed_findings
+test_report_outage_keeps_issue
+test_report_clean
+test_report_outage_without_issue
 test_report_clean
 check 'the scripts only call what the fakes know' [ ! -s "$state/unknown.log" ]
 
