@@ -18,7 +18,7 @@ env:
 
 jobs:
   checks:
-    name: Format, file length, lint and build
+    name: Audit, format, file length, lint and build
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
@@ -29,6 +29,15 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      # Known vulnerabilities from high on stop the pipeline. Lower ones only appear in the
+      # issue of the daily security run and go with the next update pull request.
+      - name: Audit dependencies, stop from high on
+        run: bash scripts/audit.sh high
+
+      - name: Test the security scripts
+        run: npm run test:scripts
+
       - run: npm run format:check
       - run: npm run check:file-length
       - run: npm run lint
