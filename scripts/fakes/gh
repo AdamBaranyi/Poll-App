@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Fake gh for scripts/test-security-scripts.sh: keeps one issue in $STATE and logs every call.
+echo "gh $*" >> "$STATE/calls.log"
+args=("$@")
+body=''
+for i in "${!args[@]}"; do
+  if [ "${args[$i]}" = '--body' ]; then body="${args[$((i + 1))]}"; fi
+done
+case "$1 $2" in
+  'issue list') cat "$STATE/number" 2>/dev/null || true ;;
+  'issue view') cat "$STATE/body" ;;
+  'issue create') printf '%s' "$body" > "$STATE/body" && echo 7 > "$STATE/number" ;;
+  'issue edit') printf '%s' "$body" > "$STATE/body" ;;
+  'issue close') rm -f "$STATE/number" ;;
+  'issue comment' | 'label create') ;;
+  *) echo "gh $*" >> "$STATE/unknown.log" && exit 1 ;;
+esac

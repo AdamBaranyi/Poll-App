@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Fake npm for scripts/test-security-scripts.sh: logs the call and ends with the code in $STATE.
+echo "npm $*" >> "$STATE/calls.log"
+if [ "$1" != 'audit' ]; then
+  echo "npm $*" >> "$STATE/unknown.log"
+  exit 1
+fi
+exit "$(cat "$STATE/npm-exit" 2>/dev/null || echo 0)"
