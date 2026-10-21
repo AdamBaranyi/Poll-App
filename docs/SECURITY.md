@@ -26,6 +26,12 @@ and `npm` programs.
   `@angular/router` update fails with `ERESOLVE`, because it needs the same `@angular/core`.
 - Only green update pull requests are merged.
 
+## Overrides
+
+| Package | Version | Why                                                                                                         | Since      | Review by                                                             |
+| ------- | ------- | ----------------------------------------------------------------------------------------------------------- | ---------- | --------------------------------------------------------------------- |
+| `vite`  | 8.3.4   | `@angular/build` 22.2.2 pins `vite` 8.3.0, which has the `launch-editor` advisories below; 8.3.3 fixes them | 21.10.2026 | 21.11.2026, remove it as soon as `@angular/build` pins a fixed `vite` |
+
 ## Exceptions
 
 None at the moment. An exception names the advisory, the package, the level, whether it runs in
@@ -41,6 +47,27 @@ later. `npm audit` cannot skip a single advisory, so an exception would need a f
 | GHSA-6qxp-vccf-f47h | `@modelcontextprotocol/sdk` 1.30.0 | high     | tools (CLI)                         | gone: CLI 22.2.1 uses `@modelcontextprotocol/server` instead                 |
 | GHSA-67c8-pqhq-4rmx | `piscina` 5.2.0                    | critical | tools (build)                       | 5.3.2 with `@angular/build` 22.2.1                                           |
 | GHSA-68fv-2mgg-jv7q | `source-map-js` 1.2.1              | high     | tools (build)                       | 1.2.2 in the lockfile; postcss and sass already allow it, no override needed |
+
+## Fixed on 21.10.2026
+
+| Advisory            | Package                              | Level  | Where                                 | Fix                       |
+| ------------------- | ------------------------------------ | ------ | ------------------------------------- | ------------------------- |
+| GHSA-jm63-cq47-j5jp | `@modelcontextprotocol/server` 2.0.0 | high   | tools (MCP server of the Angular CLI) | 2.3.1 with Angular 22.2.2 |
+| GHSA-46jr-4wx8-v453 | `@modelcontextprotocol/server` 2.0.0 | high   | tools (MCP server of the Angular CLI) | 2.3.1 with Angular 22.2.2 |
+| GHSA-rvq5-wwqv-78pq | `@modelcontextprotocol/server` 2.0.0 | medium | tools (MCP server of the Angular CLI) | 2.3.1 with Angular 22.2.2 |
+| GHSA-587h-7wmj-h5pm | `vite` 8.3.0 (`launch-editor`)       | high   | tools (development server)            | override to 8.3.4         |
+| GHSA-698v-4r3x-3vcv | `vite` 8.3.0 (`launch-editor`)       | medium | tools (development server)            | override to 8.3.4         |
+| GHSA-r825-w8mm-5pxw | `vite` 8.3.0 (`launch-editor`)       | medium | tools (development server)            | override to 8.3.4         |
+
+## Database rights
+
+`supabase/policies.sql` first takes every right away from `anon` and `authenticated` and then
+grants exactly what the app needs: `anon` may read all four tables and insert into single columns,
+`authenticated` gets nothing. From 30.10.2026 Supabase no longer gives new tables in `public` any
+rights by itself, so a table without its own `grant` answers with «permission denied». The Poll
+App does not depend on the old behaviour: `npm run test:db` runs the checks once with the old
+default rights and once without any, and both pass. A new table without a `grant` fails the
+second run. `service_role` gets no grants on purpose, because neither the app nor the tests use it.
 
 ## Secrets
 
