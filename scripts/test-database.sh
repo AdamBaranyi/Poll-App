@@ -15,6 +15,7 @@ run_checks() {
     -v old_default_grants="$2" \
     -f /supabase/tests/setup.sql \
     -f /supabase/schema.sql \
+    -f /supabase/functions.sql \
     -f /supabase/policies.sql \
     -f /supabase/seed.sql \
     -f /supabase/tests/checks.sql
