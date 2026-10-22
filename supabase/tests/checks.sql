@@ -5,11 +5,6 @@
 
 begin;
 
--- A running survey that was created two hours ago, for the ten-minute rule.
-insert into public.surveys (id, title, category, end_date, created_at)
-values ('00000000-0000-4000-8000-00000000c0de', 'Older running survey', 'Team Activities',
-        now() + interval '3 days', now() - interval '2 hours');
-
 set local role anon;
 
 do $$
@@ -19,44 +14,124 @@ begin
   end if;
 end $$;
 
--- A new survey with questions and answers can be created in one go.
+-- A new survey with its questions and answers is created in one step through create_survey.
 do $$
 declare
   new_survey uuid;
-  new_question uuid;
 begin
-  insert into public.surveys (title, category, end_date)
-  values ('Check survey', 'Team Activities', now() + interval '2 days')
-  returning id into new_survey;
+  new_survey := public.create_survey('{"title": "Check survey", "description": null,
+    "category": "Team Activities", "end_date": null,
+    "questions": [{"text": "Check question?", "allow_multiple": false, "answers": ["Yes", "No"]}]}');
+  if (select count(*) from public.answer_options
+      join public.questions on questions.id = answer_options.question_id
+      where questions.survey_id = new_survey) <> 2 then
+    raise exception 'FAILED: create_survey did not save the question with its answers';
+  end if;
+end $$;
+
+-- Nobody can add anything to a survey directly, also not to the newest one of someone else.
+do $$
+begin
+  insert into public.surveys (title, category) values ('Direct survey', 'Team Activities');
+  raise exception 'FAILED: anon inserted a survey directly';
+exception when insufficient_privilege then null;
+end $$;
+
+do $$
+begin
   insert into public.questions (survey_id, position, text)
-  values (new_survey, 1, 'Check question?')
-  returning id into new_question;
+  select id, 20, 'Foreign question?' from public.surveys order by created_at desc limit 1;
+  raise exception 'FAILED: anon added a question to the newest survey of someone else';
+exception when insufficient_privilege then null;
+end $$;
+
+do $$
+begin
   insert into public.answer_options (question_id, position, label)
-  values (new_question, 1, 'Yes'), (new_question, 2, 'No');
+  select id, 6, 'Foreign answer' from public.questions limit 1;
+  raise exception 'FAILED: anon added an answer to a question of someone else';
+exception when insufficient_privilege then null;
+end $$;
+
+-- create_survey keeps the rules of the form.
+do $$
+begin
+  perform public.create_survey('{"title": "Ended survey", "category": "Team Activities",
+    "end_date": "2000-01-01T00:00:00Z", "questions": [{"text": "Too late?", "answers": ["Yes", "No"]}]}');
+  raise exception 'FAILED: create_survey accepted a survey that has already ended';
+exception when invalid_parameter_value then null;
 end $$;
 
 do $$
 begin
-  insert into public.surveys (title, category, end_date)
-  values ('Ended survey', 'Team Activities', now() - interval '1 day');
-  raise exception 'FAILED: anon created a survey that has already ended';
-exception when insufficient_privilege then null;
+  perform public.create_survey('{"title": "Empty survey", "category": "Team Activities", "questions": []}');
+  raise exception 'FAILED: create_survey accepted a survey without questions';
+exception when invalid_parameter_value then null;
 end $$;
 
 do $$
 begin
-  insert into public.surveys (title, category, created_at)
-  values ('Backdated survey', 'Team Activities', now() - interval '1 year');
-  raise exception 'FAILED: anon set created_at itself';
-exception when insufficient_privilege then null;
+  perform public.create_survey(jsonb_build_object('title', 'Long survey', 'category', 'Team Activities',
+    'questions', (select jsonb_agg(jsonb_build_object('text', 'Question ' || n || '?',
+      'answers', jsonb_build_array('Yes', 'No'))) from generate_series(1, 21) as n)));
+  raise exception 'FAILED: create_survey accepted 21 questions';
+exception when invalid_parameter_value then null;
 end $$;
 
 do $$
 begin
-  insert into public.questions (survey_id, position, text)
-  values ('00000000-0000-4000-8000-00000000c0de', 1, 'Late question?');
-  raise exception 'FAILED: anon added a question to an older survey';
-exception when insufficient_privilege then null;
+  perform public.create_survey('{"title": "Single answer", "category": "Team Activities",
+    "questions": [{"text": "Only one answer?", "answers": ["Yes"]}]}');
+  raise exception 'FAILED: create_survey accepted a question with one answer';
+exception when invalid_parameter_value then null;
+end $$;
+
+do $$
+begin
+  perform public.create_survey('{"title": "Many answers", "category": "Team Activities",
+    "questions": [{"text": "Seven answers?", "answers": ["A", "B", "C", "D", "E", "F", "G"]}]}');
+  raise exception 'FAILED: create_survey accepted a question with seven answers';
+exception when invalid_parameter_value then null;
+end $$;
+
+-- A failure in the middle leaves nothing behind, and created_at is always set by the database.
+do $$
+begin
+  perform public.create_survey('{"title": "Half survey", "category": "Team Activities",
+    "questions": [{"text": "Fine question?", "answers": ["Yes", "No"]},
+                  {"text": "x", "answers": ["Yes", "No"]}]}');
+  raise exception 'FAILED: create_survey accepted a question that is too short';
+exception when check_violation then null;
+end $$;
+
+do $$
+begin
+  if exists (select 1 from public.surveys where title = 'Half survey') then
+    raise exception 'FAILED: a failed create_survey left a survey behind';
+  end if;
+end $$;
+
+do $$
+declare
+  new_survey uuid;
+begin
+  new_survey := public.create_survey('{"title": "Backdated survey", "category": "Team Activities",
+    "created_at": "2000-01-01T00:00:00Z", "questions": [{"text": "Backdated?", "answers": ["Yes", "No"]}]}');
+  if (select created_at from public.surveys where id = new_survey) < now() - interval '1 minute' then
+    raise exception 'FAILED: create_survey let the browser set created_at';
+  end if;
+end $$;
+
+-- Only anon may call create_survey: neither every role (PUBLIC) nor authenticated.
+do $$
+begin
+  if exists (select 1 from pg_proc, aclexplode(proacl) as acl
+             where proname = 'create_survey' and acl.grantee = 0) then
+    raise exception 'FAILED: every role may execute create_survey';
+  end if;
+  if has_function_privilege('authenticated', 'public.create_survey(jsonb)', 'execute') then
+    raise exception 'FAILED: authenticated may execute create_survey';
+  end if;
 end $$;
 
 -- Voting works on a running survey (sample survey 1) ...

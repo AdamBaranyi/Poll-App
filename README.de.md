@@ -50,11 +50,14 @@ Datenbankregeln in einem Wegwerf-Postgres (braucht Docker).
 
 ## Datenbank
 
-In `supabase/` liegt die ganze Datenbank: `schema.sql` für die Tabellen, `policies.sql` für die
-Zugriffsregeln und `seed.sql` für die Beispielumfragen.
+In `supabase/` liegt die ganze Datenbank: `schema.sql` für die Tabellen, `functions.sql` für die
+Funktion, die eine Umfrage anlegt, `policies.sql` für die Zugriffsregeln und `seed.sql` für die
+Beispielumfragen. Eine bestehende Datenbank bekommt spätere Änderungen aus `supabase/migrations/`.
 
 Die Supabase-Adresse und der öffentliche Schlüssel in `src/environments/` sind zur Veröffentlichung
-gedacht. Jede Tabelle hat Row Level Security: Lesen darf jeder, und jeder darf Umfragen, Fragen,
-Antworten und Stimmen anlegen, aber nur so, wie die App es braucht. Nachträglich ändern oder löschen
-kann niemand etwas, und Stimmen werden nur angenommen, solange eine Umfrage läuft. Geprüft wird das
-in `supabase/tests/`.
+gedacht. Jede Tabelle hat Row Level Security. Lesen darf jeder; eine Umfrage samt Fragen und
+Antworten entsteht in einem Schritt über `create_survey`, und Stimmen werden angenommen, solange eine
+Umfrage läuft. Nachträglich ändern oder löschen kann niemand etwas, und niemand kann einer fremden
+Umfrage Fragen anhängen. Geprüft wird das in `supabase/tests/`. Eine Stimme pro Browser ist eine
+Bequemlichkeit der App, keine Garantie: Ohne Login lassen sich Stimmen auch an der App vorbei senden
+(siehe `docs/SECURITY.md`).

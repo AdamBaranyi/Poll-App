@@ -9,6 +9,8 @@ create publication supabase_realtime;
 -- Until 30.10.2026 Supabase gave every new table in public all rights for anon and
 -- authenticated. From then on new tables get no rights at all, so policies.sql has to
 -- grant everything the app needs itself. scripts/test-database.sh runs the checks both ways.
+-- New functions may be executed by anon and authenticated there as well.
 \if :old_default_grants
 alter default privileges in schema public grant all on tables to anon, authenticated;
+alter default privileges in schema public grant execute on functions to anon, authenticated;
 \endif

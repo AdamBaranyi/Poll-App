@@ -15,25 +15,18 @@ export interface SurveyDraft {
   questions: QuestionDraft[];
 }
 
-/** A new survey the way it is sent to the database. */
-export interface SurveyInsert {
+/** A new question the way create_survey expects it. */
+export interface NewQuestion {
+  text: string;
+  allow_multiple: boolean;
+  answers: string[];
+}
+
+/** A new survey the way create_survey expects it: survey, questions and answers in one piece. */
+export interface NewSurvey {
   title: string;
   category: Category;
   end_date: string | null;
   description: string | null;
-}
-
-/** A new question the way it is sent to the database. */
-export interface QuestionInsert {
-  survey_id: string;
-  position: number;
-  text: string;
-  allow_multiple: boolean;
-}
-
-/** A new answer the way it is sent to the database. */
-export interface AnswerInsert {
-  question_id: string;
-  position: number;
-  label: string;
+  questions: NewQuestion[];
 }
