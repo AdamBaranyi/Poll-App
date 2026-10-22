@@ -62,12 +62,23 @@ later. `npm audit` cannot skip a single advisory, so an exception would need a f
 ## Database rights
 
 `supabase/policies.sql` first takes every right away from `anon` and `authenticated` and then
-grants exactly what the app needs: `anon` may read all four tables and insert into single columns,
-`authenticated` gets nothing. From 30.10.2026 Supabase no longer gives new tables in `public` any
+grants exactly what the app needs: `anon` may read all four tables, insert votes into single
+columns and call `create_survey`; `authenticated` gets nothing. From 30.10.2026 Supabase no longer gives new tables in `public` any
 rights by itself, so a table without its own `grant` answers with «permission denied». The Poll
 App does not depend on the old behaviour: `npm run test:db` runs the checks once with the old
 default rights and once without any, and both pass. A new table without a `grant` fails the
 second run. `service_role` gets no grants on purpose, because neither the app nor the tests use it.
+
+## Security review of 21.10.2026
+
+Done by hand with the method of the security-guidance plugin (see the pull requests of
+21.10.2026). Three findings in `supabase/policies.sql`, all medium:
+
+| Finding                                                                                                                                                                 | Decision                                                                                                                                                                                                                            |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Questions and answers could be added to any survey younger than ten minutes, not only by its creator. One question without answers made a survey unanswerable for good. | Fixed: surveys, questions and answers only come in through `create_survey` in `supabase/functions.sql`, in one step. `anon` has no insert right on these tables any more. A failure in the middle leaves nothing behind.            |
+| The voting rules (one vote per browser, one answer for a single choice question) only hold in the browser. Votes sent past the app can change the results.              | Accepted on 22.10.2026. The school task asks for no login, and without one there is no person to count votes for. The database still only takes votes while a survey is running and only with answers that belong to its questions. |
+| `anon` can read `submission_id` and `created_at` of every vote. Someone who knows when a colleague voted could find that colleague's answers.                           | Accepted on 22.10.2026. Votes carry no names. Hiding the two columns would need column rights on `votes`, and the live results depend on that table; the gain is small next to the risk of breaking them.                           |
 
 ## Secrets
 
