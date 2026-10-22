@@ -50,10 +50,13 @@ in a throwaway Postgres container (needs Docker).
 
 ## Database
 
-`supabase/` holds the whole database: `schema.sql` for the tables, `policies.sql` for the access
-rules and `seed.sql` for the sample surveys.
+`supabase/` holds the whole database: `schema.sql` for the tables, `functions.sql` for the
+function that creates a survey, `policies.sql` for the access rules and `seed.sql` for the sample
+surveys.
 
 The Supabase URL and the publishable key in `src/environments/` are meant to be public. Every table
-has row level security: anyone may read, and may add surveys, questions, answers and votes, but
-only in the ways the app needs. Nothing can be changed or deleted afterwards, and votes are only
-accepted while a survey is running. `supabase/tests/` checks these rules.
+has row level security. Anyone may read everything, create a survey with its questions and answers
+in one step through `create_survey`, and add votes while a survey is running. Nothing can be
+changed or deleted afterwards, and nobody can add questions to a survey of someone else.
+`supabase/tests/` checks these rules. One vote per browser is a convenience of the app, not a
+guarantee: without a login, votes can also be sent past the app (see `docs/SECURITY.md`).
