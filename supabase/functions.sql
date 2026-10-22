@@ -50,3 +50,9 @@ begin
   return new_survey_id;
 end;
 $$;
+
+-- New functions may be executed by every role, and Supabase also opens them for anon and
+-- authenticated. So this one is closed first and then opened for anon only, right here, so the
+-- function is never open to everyone, even when this file is run on its own.
+revoke execute on function public.create_survey(jsonb) from public, anon, authenticated;
+grant execute on function public.create_survey(jsonb) to anon;

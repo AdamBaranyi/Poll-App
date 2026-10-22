@@ -1,6 +1,7 @@
 -- Access rules for the role anon, which is every visitor of the app (there is no login).
 -- Anyone may read everything, create surveys through public.create_survey (functions.sql) and
 -- add votes. Nobody may change or delete anything.
+-- This file sets up a new database. An existing one gets the changes in supabase/migrations/.
 
 alter table public.surveys enable row level security;
 alter table public.questions enable row level security;
@@ -16,10 +17,6 @@ revoke all on public.surveys, public.questions, public.answer_options, public.vo
 grant usage on schema public to anon;
 grant select on public.surveys, public.questions, public.answer_options, public.votes to anon;
 grant insert (survey_id, question_id, option_id, submission_id) on public.votes to anon;
-
--- New functions may be executed by everyone, so this one is closed first and then opened for anon.
-revoke execute on function public.create_survey(jsonb) from public, anon, authenticated;
-grant execute on function public.create_survey(jsonb) to anon;
 
 create policy "Anyone can read surveys" on public.surveys
   for select to anon using (true);
