@@ -7,18 +7,18 @@ set -euo pipefail
 image="${POSTGRES_IMAGE:-postgres:17-alpine}"
 container="poll-app-database-test"
 
-# Runs setup, schema, policies, seed and checks in a new database.
+# Runs setup, schema, functions, policies, seed and checks in a new database.
 # $1 is the name of the database, $2 is true for the old default rights of new tables.
+# Further arguments are psql options that run after policies.sql, for example a migration.
 run_checks() {
-  docker exec "$container" createdb -U postgres "$1"
-  docker exec "$container" psql -U postgres -d "$1" -v ON_ERROR_STOP=1 -q \
-    -v old_default_grants="$2" \
-    -f /supabase/tests/setup.sql \
-    -f /supabase/schema.sql \
-    -f /supabase/functions.sql \
-    -f /supabase/policies.sql \
-    -f /supabase/seed.sql \
-    -f /supabase/tests/checks.sql
+  local database="$1" old_grants="$2"
+  shift 2
+  docker exec "$container" createdb -U postgres "$database"
+  docker exec "$container" psql -U postgres -d "$database" -v ON_ERROR_STOP=1 -q \
+    -v old_default_grants="$old_grants" \
+    -f /supabase/tests/setup.sql -f /supabase/schema.sql \
+    -f /supabase/functions.sql -f /supabase/policies.sql "$@" \
+    -f /supabase/seed.sql -f /supabase/tests/checks.sql
 }
 
 docker run --rm -d --name "$container" -e POSTGRES_PASSWORD=postgres \
@@ -33,3 +33,6 @@ echo 'New tables get all rights (Supabase until 30.10.2026):'
 run_checks old_default_grants true
 echo 'New tables get no rights (Supabase from 30.10.2026):'
 run_checks new_default_grants false
+echo 'A database set up before 22.10.2026, after its migration:'
+run_checks migrated_database true -f /supabase/tests/old-insert-rights.sql \
+  -f /supabase/migrations/2026-10-22-close-direct-inserts.sql
