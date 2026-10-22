@@ -3,13 +3,7 @@ import { Request } from '@playwright/test';
 import type { VoteRow } from '../../src/app/core/models/vote.model';
 import { buildSurveyDetailRow, buildVoteRows } from '../fixtures/survey-details';
 import { buildSurveyRows } from '../fixtures/survey-rows';
-import {
-  QUESTION_ID_KIND,
-  surveyId,
-  surveyNumberOf,
-  testId,
-  VOTE_ID_KIND,
-} from '../fixtures/test-ids';
+import { surveyId, surveyNumberOf, testId, VOTE_ID_KIND } from '../fixtures/test-ids';
 
 const NEW_VOTE_BLOCK = 9000;
 const NEW_SURVEY_NUMBER = 900;
@@ -50,27 +44,11 @@ export function answerNewVotes(request: Request, saved: SavedVote[]): VoteRow[] 
 
 export interface CreatedSurvey {
   survey: Record<string, unknown> | null;
-  questions: Record<string, unknown>[];
-  answers: Record<string, unknown>[];
 }
 
-/** Keeps the posted survey and returns its new id. */
-export function answerNewSurvey(request: Request, created: CreatedSurvey): { id: string } {
-  created.survey = request.postDataJSON() as Record<string, unknown>;
-  return { id: NEW_SURVEY_ID };
-}
-
-/** Keeps the posted questions and returns them with new ids. */
-export function answerNewQuestions(request: Request, created: CreatedSurvey): object[] {
-  created.questions = request.postDataJSON() as Record<string, unknown>[];
-  return created.questions.map((question) => ({
-    id: testId(QUESTION_ID_KIND, NEW_SURVEY_NUMBER + Number(question['position'])),
-    position: question['position'],
-  }));
-}
-
-/** Keeps the posted answers. */
-export function answerNewAnswers(request: Request, created: CreatedSurvey): object[] {
-  created.answers = request.postDataJSON() as Record<string, unknown>[];
-  return [];
+/** Keeps the survey sent to create_survey and returns its new id, as the database does. */
+export function answerNewSurvey(request: Request, created: CreatedSurvey): string {
+  const body = request.postDataJSON() as { survey: Record<string, unknown> };
+  created.survey = body.survey;
+  return NEW_SURVEY_ID;
 }

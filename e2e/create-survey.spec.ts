@@ -19,10 +19,9 @@ const EXPECTED_SURVEY = {
   description: 'Where should we eat?',
 };
 const EXPECTED_QUESTIONS = [
-  { position: 1, text: 'Which place do you like?', allow_multiple: true },
-  { position: 2, text: 'Which day suits you?', allow_multiple: false },
+  { text: 'Which place do you like?', allow_multiple: true, answers: ['Pizza', 'Sushi'] },
+  { text: 'Which day suits you?', allow_multiple: false, answers: ['Monday', 'Friday'] },
 ];
-const EXPECTED_ANSWERS = ['Pizza', 'Sushi', 'Monday', 'Friday'];
 const REQUIRED_ERRORS = [
   'Please enter a survey name.',
   'Please choose a category.',
@@ -31,16 +30,14 @@ const REQUIRED_ERRORS = [
   'Please fill in answer B.',
 ];
 
-/** Checks that survey, questions and answers were sent to the database as filled in. */
+/** Checks that survey, questions and answers were sent to create_survey in one piece as filled in. */
 function expectCreatedSurvey(created: CreatedSurvey, endDate: string): void {
   const endOfDay = new Date(`${endDate}T23:59:59`).toISOString();
-  expect(created.survey).toEqual({ ...EXPECTED_SURVEY, end_date: endOfDay });
-  const questions = EXPECTED_QUESTIONS.map((question) => ({
-    ...question,
-    survey_id: NEW_SURVEY_ID,
-  }));
-  expect(created.questions).toEqual(questions);
-  expect(created.answers.map((answer) => answer['label'])).toEqual(EXPECTED_ANSWERS);
+  expect(created.survey).toEqual({
+    ...EXPECTED_SURVEY,
+    end_date: endOfDay,
+    questions: EXPECTED_QUESTIONS,
+  });
 }
 
 test('New survey opens the form as an overlay without a new address', async ({ page }) => {

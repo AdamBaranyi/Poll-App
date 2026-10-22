@@ -1,10 +1,8 @@
-import { Page, Request, Route } from '@playwright/test';
+import { Page, Route } from '@playwright/test';
 
 import { environment } from '../../src/environments/environment';
 import { mockRealtime, RealtimeMock } from './realtime-mock';
 import {
-  answerNewAnswers,
-  answerNewQuestions,
   answerNewSurvey,
   answerNewVotes,
   answerSurveys,
@@ -19,12 +17,6 @@ const CORS_HEADERS = {
   'access-control-allow-origin': '*',
   'access-control-allow-headers': '*',
   'access-control-allow-methods': '*',
-};
-
-const CREATE_ANSWERS: Record<string, (request: Request, created: CreatedSurvey) => object> = {
-  '/rest/v1/surveys': answerNewSurvey,
-  '/rest/v1/questions': answerNewQuestions,
-  '/rest/v1/answer_options': answerNewAnswers,
 };
 
 export interface SupabaseMock {
@@ -44,7 +36,7 @@ export async function mockSupabase(page: Page): Promise<SupabaseMock> {
     failVotes: false,
     failCreate: false,
     savedVotes: [],
-    created: { survey: null, questions: [], answers: [] },
+    created: { survey: null },
     unexpectedRequests: [],
     realtime: await mockRealtime(page),
   };
@@ -62,17 +54,15 @@ async function answer(route: Route, mock: SupabaseMock): Promise<void> {
   if (call === 'GET /rest/v1/surveys') return fulfill(route, answerSurveys(url));
   if (call === 'GET /rest/v1/votes') return fulfill(route, answerVotes(url));
   if (call === 'POST /rest/v1/votes') return answerPost(route, mock);
-  if (call.startsWith('POST')) return answerCreate(route, mock, url.pathname);
+  if (call === 'POST /rest/v1/rpc/create_survey') return answerCreate(route, mock);
   return block(route, mock);
 }
 
-/** Answers the three requests that save a new survey, or fails when the test asks for it. */
-async function answerCreate(route: Route, mock: SupabaseMock, path: string): Promise<void> {
-  const answerOf = CREATE_ANSWERS[path];
-  if (!answerOf) return block(route, mock);
+/** Answers the one call that saves a new survey, or fails when the test asks for it. */
+async function answerCreate(route: Route, mock: SupabaseMock): Promise<void> {
   if (mock.failCreate) return route.fulfill({ status: SERVER_ERROR, headers: CORS_HEADERS });
-  const json = answerOf(route.request(), mock.created);
-  return route.fulfill({ status: CREATED, headers: CORS_HEADERS, json });
+  const json = answerNewSurvey(route.request(), mock.created);
+  return route.fulfill({ headers: CORS_HEADERS, json });
 }
 
 /** Saves posted votes, or fails when the test asks for it. */

@@ -1,11 +1,5 @@
 import { AnswerOption, Question, QuestionRow } from '../models/question.model';
-import {
-  AnswerInsert,
-  QuestionDraft,
-  QuestionInsert,
-  SurveyDraft,
-  SurveyInsert,
-} from '../models/survey-draft.model';
+import { NewQuestion, NewSurvey, QuestionDraft, SurveyDraft } from '../models/survey-draft.model';
 import { Survey, SurveyDetail, SurveyDetailRow, SurveyRow } from '../models/survey.model';
 import { Answers, Vote, VoteInsert, VoteRow } from '../models/vote.model';
 
@@ -64,31 +58,18 @@ export function toVoteInserts(
   );
 }
 
-/** Turns a new survey from the form into the row for the database. */
-export function toSurveyInsert(draft: SurveyDraft): SurveyInsert {
+/** Turns a new survey from the form into the one piece that create_survey saves. */
+export function toNewSurvey(draft: SurveyDraft): NewSurvey {
   return {
     title: draft.title,
     category: draft.category,
     end_date: draft.endDate?.toISOString() ?? null,
     description: draft.description,
+    questions: draft.questions.map(toNewQuestion),
   };
 }
 
-/** Turns a new question into the row for the database. */
-export function toQuestionInsert(
-  surveyId: string,
-  question: QuestionDraft,
-  position: number,
-): QuestionInsert {
-  return {
-    survey_id: surveyId,
-    position,
-    text: question.text,
-    allow_multiple: question.allowMultiple,
-  };
-}
-
-/** Turns the answers of a new question into rows for the database, A being position 1. */
-export function toAnswerInserts(questionId: string, answers: string[]): AnswerInsert[] {
-  return answers.map((label, index) => ({ question_id: questionId, position: index + 1, label }));
+/** Turns a new question from the form into the shape create_survey expects, A first. */
+function toNewQuestion(question: QuestionDraft): NewQuestion {
+  return { text: question.text, allow_multiple: question.allowMultiple, answers: question.answers };
 }
