@@ -122,6 +122,18 @@ begin
   end if;
 end $$;
 
+-- Only anon may call create_survey: neither every role (PUBLIC) nor authenticated.
+do $$
+begin
+  if exists (select 1 from pg_proc, aclexplode(proacl) as acl
+             where proname = 'create_survey' and acl.grantee = 0) then
+    raise exception 'FAILED: every role may execute create_survey';
+  end if;
+  if has_function_privilege('authenticated', 'public.create_survey(jsonb)', 'execute') then
+    raise exception 'FAILED: authenticated may execute create_survey';
+  end if;
+end $$;
+
 -- Voting works on a running survey (sample survey 1) ...
 insert into public.votes (survey_id, question_id, option_id, submission_id)
 select questions.survey_id, questions.id, answer_options.id, gen_random_uuid()
