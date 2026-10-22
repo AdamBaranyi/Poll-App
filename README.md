@@ -52,7 +52,7 @@ in a throwaway Postgres container (needs Docker).
 
 `supabase/` holds the whole database: `schema.sql` for the tables, `functions.sql` for the
 function that creates a survey, `policies.sql` for the access rules and `seed.sql` for the sample
-surveys.
+surveys. A database that already exists gets later changes from `supabase/migrations/`.
 
 The Supabase URL and the publishable key in `src/environments/` are meant to be public. Every table
 has row level security. Anyone may read everything, create a survey with its questions and answers

@@ -52,7 +52,7 @@ Datenbankregeln in einem Wegwerf-Postgres (braucht Docker).
 
 In `supabase/` liegt die ganze Datenbank: `schema.sql` für die Tabellen, `functions.sql` für die
 Funktion, die eine Umfrage anlegt, `policies.sql` für die Zugriffsregeln und `seed.sql` für die
-Beispielumfragen.
+Beispielumfragen. Eine bestehende Datenbank bekommt spätere Änderungen aus `supabase/migrations/`.
 
 Die Supabase-Adresse und der öffentliche Schlüssel in `src/environments/` sind zur Veröffentlichung
 gedacht. Jede Tabelle hat Row Level Security. Lesen darf jeder; eine Umfrage samt Fragen und
