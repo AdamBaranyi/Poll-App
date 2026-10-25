@@ -11,8 +11,6 @@ updates:
     cooldown:
       default-days: 7
     open-pull-requests-limit: 5
-    assignees:
-      - AdamBaranyi
     groups:
       minor-and-patch:
         patterns:
@@ -39,5 +37,3 @@ updates:
     cooldown:
       default-days: 7
     open-pull-requests-limit: 3
-    assignees:
-      - AdamBaranyi

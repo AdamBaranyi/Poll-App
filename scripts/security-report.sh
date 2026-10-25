@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Keeps exactly one issue with the findings of the daily security run: opens it with the
-# first finding, updates it only when the list of advisories changes and closes it when
-# nothing is left. One mail per change instead of a red run every day.
+# first finding, updates it only when the list of advisories changes and keeps it open,
+# saying "keine Befunde", when nothing is left. One mail per change instead of a red run every day.
 # Usage: bash scripts/security-report.sh audit.txt (needs GH_TOKEN and GH_REPO)
 # AUDIT_EXIT_CODE is the exit code of scripts/audit.sh. A report without advisories only
 # counts as clean when the audit ran; without the npm registry it ends with 1 and no id.
@@ -61,8 +61,14 @@ ids=$(advisory_ids)
 number=$(open_issue)
 
 if [ -z "$ids" ] && [ "$audit_code" -eq 0 ]; then
+  # Clean: the issue stays open and says "keine Befunde". Closing it and opening a new
+  # one with the next finding meant an assignment and a mail every single time.
   if [ -n "$number" ]; then
-    gh issue close "$number" --comment "Der tägliche Lauf vom $today findet keine Befunde mehr."
+    clean=$(printf '<!-- stand:clean -->\nStand %s: keine Befunde. Prüfung ab moderat (scripts/audit.sh).\n\nDieses Issue bleibt offen und zeigt den letzten Stand; der tägliche Lauf schreibt nur bei Änderungen. Bitte nicht schliessen.' "$today")
+    current=$(gh issue view "$number" --json body --jq .body)
+    if [[ "$current" != *"stand:clean"* ]]; then
+      gh issue edit "$number" --body "$clean"
+    fi
   fi
   exit 0
 fi
