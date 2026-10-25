@@ -96,6 +96,7 @@ test_report_outage_keeps_issue() {
 
 # Without an open issue, a failed audit opens one, but only once.
 test_report_outage_without_issue() {
+  rm -f "$state/number" "$state/body" # a repository without an open issue
   next_step
   audit_exit=1
   run security-report.sh "$work/outage.txt" >/dev/null
@@ -107,14 +108,16 @@ test_report_outage_without_issue() {
   check 'the same failure again changes nothing' not_called 'gh (issue (create|edit|comment|close)|label)'
 }
 
-# Without findings the issue closes, and a second clean run writes nothing.
+# Without findings the issue stays open and says so; a second clean run writes nothing.
 test_report_clean() {
   next_step
   run security-report.sh "$work/clean.txt" >/dev/null
-  check 'no findings close the issue' called 'gh issue close 7'
+  check 'no findings rewrite the issue instead of closing it' called 'gh issue edit 7'
+  check 'no findings neither close nor comment' not_called 'gh issue (close|comment)'
+  check 'the issue says that there are no findings' grep -q 'keine Befunde' "$state/body"
   next_step
   run security-report.sh "$work/clean.txt" >/dev/null
-  check 'no findings and no issue write nothing' not_called 'gh (issue (create|edit|comment|close)|label)'
+  check 'a second clean run writes nothing' not_called 'gh (issue (create|edit|comment|close)|label)'
 }
 
 mkdir -p "$state"
